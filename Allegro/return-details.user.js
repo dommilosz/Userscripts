@@ -3,11 +3,11 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://allegro.pl/moje-allegro/zakupy/kupione
 // @grant       none
-// @version     1.0
+// @version     1.1
 // @author      dommilosz
 // @description 10/22/2023, 2:13:18 PM
-// @updateURL https://github.com/dommilosz/Userscripts/blob/master/Allegro/return-details.user.js
-// @downloadURL https://github.com/dommilosz/Userscripts/blob/master/Allegro/return-details.user.js
+// @updateURL https://github.com/dommilosz/Userscripts/raw/master/Allegro/return-details.user.js
+// @downloadURL https://github.com/dommilosz/Userscripts/raw/master/Allegro/return-details.user.js
 // ==/UserScript==
 
 
