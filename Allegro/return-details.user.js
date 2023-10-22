@@ -3,16 +3,40 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://allegro.pl/moje-allegro/zakupy/kupione
 // @grant       none
-// @version     1.1
+// @version     1.2
 // @author      dommilosz
 // @description 10/22/2023, 2:13:18 PM
-// @updateURL https://github.com/dommilosz/Userscripts/raw/master/Allegro/return-details.user.js
-// @downloadURL https://github.com/dommilosz/Userscripts/raw/master/Allegro/return-details.user.js
+// @updateURL https://github.com/dommilosz/Userscripts/blob/master/Allegro/return-details.user.js
+// @downloadURL https://github.com/dommilosz/Userscripts/blob/master/Allegro/return-details.user.js
 // ==/UserScript==
 
 
 async function delay(ms){
   return await new Promise(r=>setTimeout(r, ms));
+}
+
+function getReturnInfo(el){
+  let returnStatus = el.querySelector("#opbox-myorder-returns > div > div > div > div");
+  let returnTimes = [...(el.querySelector(`button[data-button-type="return"]`).parentNode.querySelectorAll("span"))];
+
+  let returnTime = document.createElement("div");
+  returnTime.style.display = "flex";
+  returnTime.style.flexDirection = "column";
+  returnTimes.forEach(el=>{
+    returnTime.appendChild(el)
+  })
+
+  if(!returnStatus){
+    returnStatus = document.createElement("div");
+    returnStatus.outerHTML = `<div class="mpof_ki mwdn_1 mr3m_1 gvl9v">Brak zwrotu</div>`
+  }
+
+  returnStatus.className = "mpof_ki mwdn_1 mr3m_1 gvl9v msts_pt munh_0 mj7a_16 mg9e_16 m389_6m";
+
+  returnStatus.appendChild(returnTime);
+  returnTime.className = "mpof_ki mr3m_1 mjyo_6x gel0f";
+
+  return returnStatus;
 }
 
 async function loadDetails(url){
@@ -22,15 +46,13 @@ async function loadDetails(url){
   console.log(details)
   window.el = el;
 
-  let returnStatus = el.querySelector("#opbox-myorder-returns > div > div > div > div");
-  let returnTime = el.querySelector(`button[data-button-type="return"]`).parentNode.querySelector("span");
+  let banner = document.createElement("div");
 
-  if(!returnStatus){
-    returnStatus = document.createElement("div");
-    returnStatus.outerHTML = `<div class="mpof_ki mwdn_1 mr3m_1 gvl9v">Brak zwrotu</div>`
-  }
+  let returnInfo = getReturnInfo(el);
 
-  return  {returnStatus, returnTime};
+  banner.appendChild(returnInfo);
+
+  return  banner;
 }
 
 async function main(){
@@ -45,6 +67,11 @@ async function main(){
     let url = [...order.querySelectorAll("a")].filter(el=>el.href.includes("/moje-allegro/zakupy/kupione/"))[0].href;
     let group = order.children[0];
 
+    if(group.className.includes("button-added")){
+      continue;
+    }
+    group.classList.add("button-added");
+
     let button = document.createElement("button");
     button.innerHTML = "Fetch details";
     button.onclick = ftch;
@@ -53,13 +80,14 @@ async function main(){
     header.appendChild(button);
 
     async function ftch(){
-      let {returnStatus, returnTime} = await loadDetails(url, header.parentNode);
+      let banner = await loadDetails(url, header.parentNode);
 
-      returnStatus.className = "mpof_ki mwdn_1 mr3m_1 gvl9v msts_pt munh_0 mj7a_16 mg9e_16 m389_6m";
+      let childBefore = group.children[1];
 
-      returnStatus.appendChild(returnTime);
-      returnTime.className = "mpof_ki mr3m_1 mjyo_6x gel0f";
-      group.insertBefore(returnStatus, group.children[1]);
+      group.insertBefore(banner, childBefore);
+      let hr = document.createElement("hr");
+      hr.className = `mpof_z0 m7er_k4 mp4t_0 m3h2_0 mryx_0 munh_0 m911_5r mefy_5r mnyp_5r mdwl_5r mse2_1 msts_me`
+      group.insertBefore(hr, banner);
       button.style.display = "none";
     }
     if(autoRun){
@@ -68,5 +96,7 @@ async function main(){
   }
   console.log(orders);
 }
+
+setInterval(main, 1000);
 
 main()
