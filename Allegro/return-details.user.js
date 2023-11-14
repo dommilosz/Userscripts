@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://allegro.pl/moje-allegro/zakupy/kupione
 // @grant       none
-// @version     1.3
+// @version     1.4
 // @author      dommilosz
 // @description 10/22/2023, 2:13:18 PM
 // @updateURL https://github.com/dommilosz/Userscripts/raw/master/Allegro/return-details.user.js
@@ -72,6 +72,11 @@ async function main(){
         if(content.includes("Zwrot zakończony") || content.includes("Przesyłka odebrana")){
           order.style.display="none";
         }
+      }else if (document.querySelector("#notfull_returns_li_btn")?.checked){
+        let content = order.textContent;
+        if(!content.includes("Zwrot") || content.includes("Pełen zwrot pieniędzy")){
+          order.style.display="none";
+        }
       }else{
         order.style.display="";
       }
@@ -105,13 +110,34 @@ async function main(){
   if(!document.querySelector("#pending_returns_li_btn")){
     let li = document.createElement("li");
     li.className = "mp7g_oh mpof_ki mp4t_0 m3h2_8 mryx_8 munh_0";
-    li.innerHTML = `<div class="m7er_k4 msa3_z4 _355a6_5yU4X"><input type="checkbox" name="filter2" id="pending_returns_li_btn" value="returned" class="mp7g_f6 meqh_en mg9e_0 mvrt_0 mj7a_0 mh36_0 m911_5r mefy_5r mnyp_5r mdwl_5r so63mt"><label for="pending_returns_li_btn" class="mjyo_6x mpof_ki myre_zn m7f5_6m m389_6m mg9e_4 mvrt_4 mj7a_4 mh36_4 msbw_2 mldj_2 mtag_2 mm2b_2 mqen_m6 meqh_en m0ux_fp mp5q_jr so1did"><span>In progress</span></label></div>`
+    li.innerHTML = `<div class="m7er_k4 msa3_z4 _355a6_5yU4X"><input type="radio" name="filter2" id="pending_returns_li_btn" value="returned" class="mp7g_f6 meqh_en mg9e_0 mvrt_0 mj7a_0 mh36_0 m911_5r mefy_5r mnyp_5r mdwl_5r so63mt"><label for="pending_returns_li_btn" class="mjyo_6x mpof_ki myre_zn m7f5_6m m389_6m mg9e_4 mvrt_4 mj7a_4 mh36_4 msbw_2 mldj_2 mtag_2 mm2b_2 mqen_m6 meqh_en m0ux_fp mp5q_jr so1did"><span>In progress</span></label></div>`
+
+    li.onclick = async ()=>{
+      li.querySelector("input").click();
+    }
 
     let rg = document.querySelector("ul[role='radiogroup']");
-    li.onclick = async ()=>{
-      li.querySelector("input").checked = !li.querySelector("input").checked;
-    }
     rg.appendChild(li);
+
+    let li2 = document.createElement("li");
+    li2.className = "mp7g_oh mpof_ki mp4t_0 m3h2_8 mryx_8 munh_0";
+    li2.innerHTML = `<div class="m7er_k4 msa3_z4 _355a6_5yU4X"><input type="radio" name="filter2" id="notfull_returns_li_btn" value="returned" class="mp7g_f6 meqh_en mg9e_0 mvrt_0 mj7a_0 mh36_0 m911_5r mefy_5r mnyp_5r mdwl_5r so63mt"><label for="notfull_returns_li_btn" class="mjyo_6x mpof_ki myre_zn m7f5_6m m389_6m mg9e_4 mvrt_4 mj7a_4 mh36_4 msbw_2 mldj_2 mtag_2 mm2b_2 mqen_m6 meqh_en m0ux_fp mp5q_jr so1did"><span>Not full return</span></label></div>`
+
+    li2.onclick = async ()=>{
+      li2.querySelector("input").click();
+    }
+
+    rg.appendChild(li2);
+
+    let li3 = document.createElement("li");
+    li3.className = "mp7g_oh mpof_ki mp4t_0 m3h2_8 mryx_8 munh_0";
+    li3.innerHTML = `<div class="m7er_k4 msa3_z4 _355a6_5yU4X"><input type="radio" name="filter2" id="clear_li_btn" value="returned" class="mp7g_f6 meqh_en mg9e_0 mvrt_0 mj7a_0 mh36_0 m911_5r mefy_5r mnyp_5r mdwl_5r so63mt"><label for="clear_li_btn" class="mjyo_6x mpof_ki myre_zn m7f5_6m m389_6m mg9e_4 mvrt_4 mj7a_4 mh36_4 msbw_2 mldj_2 mtag_2 mm2b_2 mqen_m6 meqh_en m0ux_fp mp5q_jr so1did"><span>Clear</span></label></div>`
+
+    li3.onclick = async ()=>{
+      li3.querySelector("input").checked = false;
+    }
+
+    rg.appendChild(li3);
   }
 }
 
