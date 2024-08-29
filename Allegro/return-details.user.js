@@ -3,7 +3,7 @@
 // @namespace   Violentmonkey Scripts
 // @match       https://allegro.pl/moje-allegro/zakupy/kupione
 // @grant       none
-// @version     1.5
+// @version     1.6
 // @author      dommilosz
 // @description 10/22/2023, 2:13:18 PM
 // @updateURL https://github.com/dommilosz/Userscripts/raw/master/Allegro/return-details.user.js
@@ -68,6 +68,7 @@ async function processGroup(groupId){
   try{
   group.rescissions.rescissions.forEach(waybill=>{
     addProperty("return-"+waybill.rescissionId, "Return Status", waybill.timelineStatus.label + " " + waybill.timelineStatus.hint, orderDiv);
+    addProperty("return-ref-"+waybill.rescissionId, "Return Code", waybill.referenceNumber + " " + waybill.readyReturnParcels.map(p=>p.returnCode).join(","), orderDiv);
   })}catch{}
 
   try{
